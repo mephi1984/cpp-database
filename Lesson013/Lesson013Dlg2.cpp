@@ -35,6 +35,8 @@ BEGIN_MESSAGE_MAP(CLesson013Dlg2, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_SIZE()
+	ON_NOTIFY(GVN_BEGINLABELEDIT, 1010, OnBeginEdit) 
+	ON_NOTIFY(GVN_ENDLABELEDIT, 1010, OnEndEdit)
 END_MESSAGE_MAP()
 
 
@@ -53,27 +55,20 @@ BOOL CLesson013Dlg2::OnInitDialog()
 	m_Grid.Create(rectx, this, 1010);
 
 	// Настройка колонок и строк
-	m_Grid.SetColumnCount(5);
-	m_Grid.SetRowCount(database.getWorkerCount());
+	m_Grid.SetColumnCount(8);
+	m_Grid.SetRowCount(database.getWorkerCount()+1);
 	m_Grid.SetFixedRowCount(1);
 
 	// Заполнение заголовков колонок
-	m_Grid.SetItemText(0, 0, _T("Колонка 1"));
-	m_Grid.SetItemText(0, 1, _T("Колонка 2"));
-	m_Grid.SetItemText(0, 2, _T("Колонка 3"));
-	m_Grid.SetItemText(0, 3, _T("Колонка 4"));
-	m_Grid.SetItemText(0, 4, _T("Колонка 5"));
+	m_Grid.SetItemText(0, 0, _T("id"));
+	m_Grid.SetItemText(0, 1, _T("Фамилия"));
+	m_Grid.SetItemText(0, 2, _T("Имя"));
+	m_Grid.SetItemText(0, 3, _T("Отчество"));
+	m_Grid.SetItemText(0, 4, _T("Позиция"));
+	m_Grid.SetItemText(0, 5, _T("Пол"));
+	m_Grid.SetItemText(0, 6, _T("Семья"));
+	m_Grid.SetItemText(0, 7, _T("Дети"));
 
-	// Заполнение ячеек данными
-	for (int row = 1; row < m_Grid.GetRowCount(); row++)
-	{
-		for (int col = 0; col < m_Grid.GetColumnCount(); col++)
-		{
-			CString data;
-			data.Format(_T("%d,%d"), row, col);
-			m_Grid.SetItemText(row, col, data);
-		}
-	}
 
 	// Активация редактирования ячеек
 	m_Grid.SetEditable(TRUE);
@@ -83,7 +78,8 @@ BOOL CLesson013Dlg2::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Крупный значок
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
-	
+	RefreshToolbar();
+
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
 }
 
@@ -131,6 +127,52 @@ HCURSOR CLesson013Dlg2::OnQueryDragIcon()
 
 void CLesson013Dlg2::RefreshToolbar()
 {
+	if (m_Grid.GetSafeHwnd())
+	{
+		workers = database.getAllWorkers();
+
+
+
+		// Заполнение ячеек данными
+		for (int row = 1; row < m_Grid.GetRowCount(); row++)
+		{
+			auto& worker = workers[row - 1];
+
+
+			std::stringstream s1;
+			s1 << std::get<0>(worker);
+			CString str1{ s1.str().c_str() };
+			m_Grid.SetItemText(row, 0, str1);
+
+			CString str2{ std::get<1>(worker).c_str() };
+			m_Grid.SetItemText(row, 1, str2);
+
+			CString str3{ std::get<2>(worker).c_str() };
+			m_Grid.SetItemText(row, 2, str3);
+
+			CString str4{ std::get<3>(worker).c_str() };
+			m_Grid.SetItemText(row, 3, str4);
+
+			CString str5{ std::get<4>(worker).c_str() };
+			m_Grid.SetItemText(row, 4, str5);
+
+			std::stringstream s6;
+			s6 << std::get<5>(worker);
+			CString str6{ s6.str().c_str() };
+			m_Grid.SetItemText(row, 5, str6);
+
+			std::stringstream s7;
+			s7 << std::get<6>(worker);
+			CString str7{ s7.str().c_str() };
+			m_Grid.SetItemText(row, 6, str7);
+
+
+			std::stringstream s8;
+			s8 << std::get<7>(worker);
+			CString str8{ s8.str().c_str() };
+			m_Grid.SetItemText(row, 7, str8);
+		}
+	}
 	/*
 	if (m_ToolBar.GetSafeHwnd())
 	{
@@ -216,5 +258,84 @@ void CLesson013Dlg2::OnSize(UINT nType, int cx, int cy)
 	if (m_Grid.GetSafeHwnd())
 	{
 		m_Grid.MoveWindow(rectx);
+	}
+}
+
+
+void CLesson013Dlg2::OnBeginEdit(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	GV_ITEM* pItem = (GV_ITEM*)pNMHDR;
+	// Здесь ваш код обработки начала редактирования
+	*pResult = 0; // Установите 0, если редактирование разрешено, 1, если запрещено
+}
+
+void CLesson013Dlg2::OnEndEdit(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	GV_ITEM* pItem = (GV_ITEM*)pNMHDR;
+	try
+	{
+		SaveEverything();
+		*pResult = 0;
+	}
+	catch (const std::exception& e)
+	{
+		*pResult = 1;
+	}
+}
+
+void CLesson013Dlg2::SaveEverything()
+{
+	std::vector<std::tuple<int, std::string, std::string, std::string, std::string, int, int, int>> oldWorkers = workers;
+	std::string stdStr;
+	// Заполнение ячеек данными
+	for (int row = 1; row < m_Grid.GetRowCount(); row++)
+	{
+		CString idStr = m_Grid.GetItemText(row, 0);
+		stdStr = std::string{ CT2A(idStr) };
+		int id = std::stoi(stdStr);
+		std::get<0>(workers[row - 1]) = id;
+
+		std::string lastNameStdStr;
+		CString lastNameStr = m_Grid.GetItemText(row, 1);
+		lastNameStdStr = std::string{ CT2A(lastNameStr) };
+		std::get<1>(workers[row - 1]) = lastNameStdStr;
+
+		std::string firstNameStdStr;
+		CString firstNameStr = m_Grid.GetItemText(row, 2);
+		firstNameStdStr = std::string{ CT2A(firstNameStr) };
+		std::get<2>(workers[row - 1]) = firstNameStdStr;
+
+		std::string middleNameStdStr;
+		CString middleNameStr = m_Grid.GetItemText(row, 3);
+		middleNameStdStr = std::string{ CT2A(middleNameStr) };
+		std::get<3>(workers[row - 1]) = middleNameStdStr;
+
+		std::string positionStdStr;
+		CString positionStr = m_Grid.GetItemText(row, 4);
+		positionStdStr = std::string{ CT2A(positionStr) };
+		std::get<4>(workers[row - 1]) = positionStdStr;
+
+
+		CString genderStr = m_Grid.GetItemText(row, 5);
+		stdStr = std::string{ CT2A(genderStr) };
+		int gender = std::stoi(stdStr);
+		std::get<5>(workers[row - 1]) = gender;
+
+
+		CString familyStr = m_Grid.GetItemText(row, 6);
+		stdStr = std::string{ CT2A(familyStr) };
+		int family = std::stoi(stdStr);
+		std::get<6>(workers[row - 1]) = family;
+
+
+		CString childrenStr = m_Grid.GetItemText(row, 7);
+		stdStr = std::string{ CT2A(childrenStr) };
+		int children = std::stoi(stdStr);
+		std::get<7>(workers[row - 1]) = children;
+	}
+
+	for (int i = 0; i < workers.size(); i++)
+	{
+		database.updateWorker(std::get<0>(oldWorkers[i]), workers[i]);
 	}
 }

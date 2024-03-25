@@ -3,7 +3,8 @@
 #include "framework.h"
 #include <functional>
 #include "GridCtrl_src/GridCtrl.h"
-
+#include <tuple>
+#include <string>
 class CLesson013Dlg2 : public CDialogEx
 {
 // Создание
@@ -34,6 +35,8 @@ protected:
 	CButton m_ButtonDelete;
 	CButton m_ButtonSave;
 	CGridCtrl m_Grid;
+
+	std::vector<std::tuple<int, std::string, std::string, std::string, std::string, int, int, int>> workers;
 	// Созданные функции схемы сообщений
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -43,5 +46,11 @@ protected:
 
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	void RefreshToolbar();
+
+	afx_msg void OnBeginEdit(NMHDR* pNMHDR, LRESULT* pResult);
+
+	afx_msg void OnEndEdit(NMHDR* pNMHDR, LRESULT* pResult);
+
+	void SaveEverything();
 public:
 };
