@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "framework.h"
 #include <functional>
-
+#include <string>
 
 class CLesson013Dlg1 : public CDialogEx
 {
@@ -34,6 +34,10 @@ protected:
 	CButton m_ButtonDelete;
 	CButton m_ButtonSave;
 
+	int currentPos = 0;
+	std::string currentPosText;
+	std::string countText;
+
 	// Созданные функции схемы сообщений
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -42,6 +46,17 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 	void RefreshToolbar();
+
+	std::vector<std::tuple<int, std::string, int, int, int, int, bool, std::string, std::string>> dishes;
+	void fetchCurrentDish();
+
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButton3();
+	afx_msg void OnBnClickedButton4();
+	afx_msg void OnBnClickedButton5();
+	afx_msg void OnBnClickedButton6();
+	afx_msg void OnBnClickedButton7();
 public:
 
 };

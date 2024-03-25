@@ -94,10 +94,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Work\Projects\Database\Lesson013</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Work\Projects\Database\Lesson013;C:\Work\Projects\pqxx-build\stage\include;C:\Work\Projects\libpqxx-7.8.1\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>C:\Work\Projects\pqxx-build\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>pqxx.lib;C:\Program Files\PostgreSQL\15\lib\libpq.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -186,6 +189,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CLesson013Dlg4.h" />
+    <ClInclude Include="DatabaseClass.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GridCtrl_src\CellRange.h" />
     <ClInclude Include="GridCtrl_src\GridCell.h" />
@@ -205,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CLesson013Dlg4.cpp" />
+    <ClCompile Include="DatabaseClass.cpp" />
     <ClCompile Include="GridCtrl_src\GridCell.cpp" />
     <ClCompile Include="GridCtrl_src\GridCellBase.cpp" />
     <ClCompile Include="GridCtrl_src\GridCtrl.cpp" />

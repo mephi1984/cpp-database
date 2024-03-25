@@ -66,6 +66,9 @@
     <ClInclude Include="GridCtrl_src\TitleTip.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="DatabaseClass.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lesson013.cpp">
@@ -102,6 +105,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="GridCtrl_src\TitleTip.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabaseClass.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

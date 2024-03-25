@@ -12,6 +12,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <sstream>
+#include "DatabaseClass.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,46 +43,18 @@ BOOL CLesson013Dlg2::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	/*
-	if ((!m_ToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP
-		| CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC)))
-	{
-		TRACE0("Не удалось создать панель инструментов\n");
-		return FALSE;      // не удалось создать
-	}
-
-	m_Button1.Create("|<", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 25, 20), &m_ToolBar, 1002);
-	m_Button2.Create("<", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 25, 20), &m_ToolBar, 1003);
-	m_Button3.Create(">", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 25, 20), &m_ToolBar, 1004);
-	m_Button4.Create(">|", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 25, 20), &m_ToolBar, 1005);
-
-	m_EditBox.Create(WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, CRect(0, 0, 30, 20), &m_ToolBar, 1001);
-
-	if (!m_StaticText.Create("of 0", WS_VISIBLE | WS_CHILD | SS_LEFT,
-		CRect(0, 0, 50, 25), &m_ToolBar))
-	{
-		TRACE0("Не удалось создать статический текст\n");
-		return FALSE;      // не удалось создать
-	}
-
-	m_ButtonAdd.Create("+", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 25, 20), &m_ToolBar, 1006);
-	m_ButtonDelete.Create("X", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 25, 20), &m_ToolBar, 1007);
-	m_ButtonSave.Create("SAVE", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 50, 20), &m_ToolBar, 1008);
-
-	*/
-	//RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
 	RefreshToolbar();
 
 
 	
 	CRect rectx;
 	this->GetClientRect(rectx);
-	//rectx.top += 30;
+
 	m_Grid.Create(rectx, this, 1010);
 
 	// Настройка колонок и строк
 	m_Grid.SetColumnCount(5);
-	m_Grid.SetRowCount(10);
+	m_Grid.SetRowCount(database.getWorkerCount());
 	m_Grid.SetFixedRowCount(1);
 
 	// Заполнение заголовков колонок
