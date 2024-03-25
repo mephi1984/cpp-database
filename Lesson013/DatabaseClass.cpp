@@ -4,13 +4,15 @@
 DatabaseClass database;
 
 DatabaseClass::DatabaseClass()
-	: conn("host=127.0.0.1 port=5432 dbname=lesson03 user=lesson03user password=lesson03user")
+	: conn("host=127.0.0.1 port=5432 dbname=windb user=lesson03user password=lesson03user")
 {
 	conn.prepare("insert_dish", "INSERT INTO dish(	id, title, type, price, out, typeofout, present, contains, photo) VALUES($1, '', 1, 0, 0, 0, false, '', '')");
 	conn.prepare("delete_dish", "DELETE FROM dish where id=$1");
 
 	//SELECT id, lastname, firstname, middlename, position, gender, family, children from worker
 	conn.prepare("update_workers", "UPDATE worker set id=$2, lastname=$3, firstname=$4, middlename=$5, position=$6, gender=$7, family=$8, children=$9 where id=$1");
+	conn.prepare("update_dish", "UPDATE dish set id=$2, title=$3, type=$4, price=$5, out=$6, typeofout=$7, present=$8, contains=$9, photo=$10 where id=$1");
+
 }
 
 int DatabaseClass::getWorkerCount()
@@ -87,6 +89,15 @@ void DatabaseClass::updateWorker(int oldid, std::tuple<int, std::string, std::st
 	pqxx::transaction tx{ conn };
 
 	tx.exec_prepared("update_workers", oldid, std::get<0>(value), std::get<1>(value), std::get<2>(value), std::get<3>(value), std::get<4>(value), std::get<5>(value), std::get<6>(value), std::get<7>(value));
+
+	tx.commit();
+}
+
+void DatabaseClass::updateDish(int oldid, std::tuple<int, std::string, int, int, int, int, bool, std::string, std::string> value)
+{
+	pqxx::transaction tx{ conn };
+
+	tx.exec_prepared("update_dish", oldid, std::get<0>(value), std::get<1>(value), std::get<2>(value), std::get<3>(value), std::get<4>(value), std::get<5>(value), std::get<6>(value), std::get<7>(value), std::get<8>(value));
 
 	tx.commit();
 }

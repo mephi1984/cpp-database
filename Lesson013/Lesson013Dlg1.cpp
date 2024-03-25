@@ -78,6 +78,25 @@ BOOL CLesson013Dlg1::OnInitDialog()
 	m_ButtonSave.Create("SAVE", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_FLAT, CRect(0, 0, 50, 20), &m_ToolBar, 1008);
 
 
+	CComboBox* pComboBox2 = (CComboBox*)GetDlgItem(IDC_COMBO2);
+
+	if (pComboBox2 != nullptr)
+	{
+		pComboBox2->AddString(_T("Первое"));
+		pComboBox2->AddString(_T("Второе"));
+	}
+	pComboBox2->SetCurSel(0);
+
+
+	CComboBox* pComboBox1 = (CComboBox*)GetDlgItem(IDC_COMBO1);
+
+	if (pComboBox1 != nullptr)
+	{
+		pComboBox1->AddString(_T("гр"));
+		pComboBox1->AddString(_T("мл"));
+	}
+	pComboBox1->SetCurSel(0);
+
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
 	RefreshToolbar();
 
@@ -240,7 +259,17 @@ void CLesson013Dlg1::fetchCurrentDish()
 	CEdit* edit3 = (CEdit*)GetDlgItem(IDC_EDIT3);
 	edit3->SetWindowTextA(get<1>(value).c_str());
 
-	//....
+	CComboBox* pComboBox2 = (CComboBox*)GetDlgItem(IDC_COMBO2);
+	int c2 = get<2>(value) - 1;
+	if (c2 < 0)
+	{
+		c2 = 0;
+	}
+	if (c2 > 1)
+	{
+		c2 = 1;
+	}
+	pComboBox2->SetCurSel(c2);
 
 	CEdit* edit6 = (CEdit*)GetDlgItem(IDC_EDIT6);
 	std::stringstream s6;
@@ -252,13 +281,64 @@ void CLesson013Dlg1::fetchCurrentDish()
 	s7 << get<4>(value);
 	edit7->SetWindowTextA(s7.str().c_str());
 
-	//....
+	CComboBox* pComboBox1 = (CComboBox*)GetDlgItem(IDC_COMBO1);
+	int c1 = get<5>(value) - 1;
+	if (c1 < 0)
+	{
+		c1 = 0;
+	}
+	if (c1 > 1)
+	{
+		c1 = 1;
+	}
+	pComboBox1->SetCurSel(c1);
+
+	CButton* checkbox = (CButton*)GetDlgItem(IDC_CHECK1);
+
+	if (get<6>(value))
+	{
+		checkbox->SetCheck(BST_CHECKED);
+	}
+	else
+	{
+		checkbox->SetCheck(BST_UNCHECKED);
+	}
 
 	CEdit* edit9 = (CEdit*)GetDlgItem(IDC_EDIT9);
 	edit9->SetWindowTextA(get<7>(value).c_str());
 
 	CEdit* edit2 = (CEdit*)GetDlgItem(IDC_EDIT2);
 	edit2->SetWindowTextA(get<8>(value).c_str());
+
+	// Получение дескриптора изображения с использованием LoadImage
+	HBITMAP hBitmap = (HBITMAP)::LoadImage(AfxGetInstanceHandle(),
+		get<8>(value).c_str(),
+		IMAGE_BITMAP,
+		0,
+		0,
+		LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
+	CStatic* pStatic = (CStatic*)GetDlgItem(IDC_STATIC_IMAGE);
+
+	// Проверяем, успешно ли загружено изображение
+	if (hBitmap)
+	{
+		CBitmap bitmap;
+		bitmap.Attach(hBitmap); // Связываем дескриптор с CBitmap
+
+		// Получаем указатель на CStatic и устанавливаем изображение
+		
+		if (pStatic != nullptr)
+		{
+			pStatic->SetBitmap(bitmap); // Передаем дескриптор изображения
+		}
+	}
+	else
+	{
+		pStatic->SetBitmap(0);
+		// Обработка ошибки загрузки
+		//AfxMessageBox(L"Не удалось загрузить изображение.");
+	}
 
 	/*
 	CString str;
@@ -354,5 +434,64 @@ void CLesson013Dlg1::OnBnClickedButton6()
 }
 void CLesson013Dlg1::OnBnClickedButton7()
 {
+	auto& dish = dishes[currentPos];
 
+	std::tuple<int, std::string, int, int, int, int, bool, std::string, std::string> newDish;
+
+	int old_id = std::get<0>(dish);
+
+	CString str;
+	std::string stdStr;
+	try
+	{
+		GetDlgItemText(IDC_EDIT1, str);
+		stdStr = std::string{ CT2A(str) };
+		std::get<0>(newDish) = std::stoi(stdStr);
+
+		GetDlgItemText(IDC_EDIT3, str);
+		stdStr = std::string{ CT2A(str) };
+		std::get<1>(newDish) = stdStr;
+
+
+		CComboBox* pComboBox2 = (CComboBox*)GetDlgItem(IDC_COMBO2);
+		std::get<2>(newDish) = pComboBox2->GetCurSel() + 1;
+
+
+		GetDlgItemText(IDC_EDIT6, str);
+		stdStr = std::string{ CT2A(str) };
+		std::get<3>(newDish) = std::stoi(stdStr);
+
+
+		GetDlgItemText(IDC_EDIT7, str);
+		stdStr = std::string{ CT2A(str) };
+		std::get<4>(newDish) = std::stoi(stdStr);
+
+		CComboBox* pComboBox1 = (CComboBox*)GetDlgItem(IDC_COMBO1);
+		std::get<5>(newDish) = pComboBox1->GetCurSel() + 1;
+
+
+		CButton* checkbox = (CButton*)GetDlgItem(IDC_CHECK1);
+		if (checkbox->GetCheck() == BST_CHECKED)
+		{
+			std::get<6>(newDish) = true;
+		}
+		else
+		{
+			std::get<6>(newDish) = false;
+		}
+
+		GetDlgItemText(IDC_EDIT9, str);
+		stdStr = std::string{ CT2A(str) };
+		std::get<7>(newDish) = stdStr;
+
+		GetDlgItemText(IDC_EDIT2, str);
+		stdStr = std::string{ CT2A(str) };
+		std::get<8>(newDish) = stdStr;
+
+		database.updateDish(old_id, newDish);
+	}
+	catch (const std::exception& e)
+	{
+		
+	}
 }

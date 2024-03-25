@@ -32,7 +32,7 @@
 #define IDC_CHECK1                      1012
 #define IDC_COMBO1                      1013
 #define IDC_COMBO2                      1014
-#define IDC_MFCPROPERTYGRID1            1015
+#define IDC_STATIC_IMAGE                1016
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -45,7 +45,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        141
 #define _APS_NEXT_COMMAND_VALUE         32787
-#define _APS_NEXT_CONTROL_VALUE         1016
+#define _APS_NEXT_CONTROL_VALUE         1017
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
